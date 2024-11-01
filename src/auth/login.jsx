@@ -12,6 +12,7 @@ const Login = () => {
     });
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+    const [errors, setErrors] = useState({});
 
 
     const handleChange = (e) => {
@@ -21,6 +22,12 @@ const Login = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        const validationErrors = validate();
+        if (Object.keys(validationErrors).length > 0) {
+            setErrors(validationErrors);
+            return;
+        }
+
         setLoading(true)
         try {
             //console.log(formData);
@@ -33,10 +40,24 @@ const Login = () => {
             setLoading(false)
         }
     };
+    const validate = () => {
+        const errors = {};
+        if (!formData.email) {
+            errors.email = 'L\'email est requis';
+        } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+            errors.email = 'L\'email n\'est pas valide';
+        }
+        if (!formData.password) {
+            errors.password = 'Le mot de passe est requis';
+        } else if (formData.password.length < 6) {
+            errors.password = 'Le mot de passe doit comporter au moins 6 caractères';
+        }
+        return errors;
+    };
 
     return (
         <>
-            <Navbar/>
+            <Navbar />
             <div className="flex items-center justify-center min-h-screen bg-gray-100">
                 <div className="w-full max-w-md p-6 border rounded-lg shadow-lg bg-white">
                     <h2 className="text-2xl font-bold text-center mb-6">Se connecter</h2>
@@ -47,9 +68,9 @@ const Login = () => {
                                 name="email"
                                 placeholder="Email"
                                 onChange={handleChange}
-                                className="form-control border border-gray-300 rounded-md p-3 focus:outline-none focus:ring focus:ring-blue-400 w-full"
-                                // value="john@example.com"
+                                className={`form-control border border-gray-300 rounded-md p-3 focus:outline-none focus:ring focus:ring-blue-400 w-full ${errors.email ? 'border-red-500' : ''}`}
                             />
+                            {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
                         </div>
                         <div className="form-group">
                             <input
@@ -57,9 +78,9 @@ const Login = () => {
                                 name="password"
                                 placeholder="Mot de passe"
                                 onChange={handleChange}
-                                className="form-control border border-gray-300 rounded-md p-3 focus:outline-none focus:ring focus:ring-blue-400 w-full"
-                                //value="password"
+                                className={`form-control border border-gray-300 rounded-md p-3 focus:outline-none focus:ring focus:ring-blue-400 w-full ${errors.password ? 'border-red-500' : ''}`}
                             />
+                            {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
                         </div>
                         <button
                             type="submit"
@@ -73,14 +94,12 @@ const Login = () => {
                     </form>
                     {loading && (
                         <div className="flex justify-center mt-4">
-                            <div
-                                className="loader animate-spin w-6 h-6 border-4 border-blue-500 border-t-transparent rounded-full"></div>
+                            <div className="loader animate-spin w-6 h-6 border-4 border-blue-500 border-t-transparent rounded-full"></div>
                         </div>
                     )}
-                    {/*<p>si tu n'as pas de compte inscrit</p>*/}
                 </div>
             </div>
-            <Footer/>
+            <Footer />
             <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} closeOnClick pauseOnHover draggable />
         </>
     );
