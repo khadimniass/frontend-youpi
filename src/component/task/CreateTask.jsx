@@ -1,37 +1,39 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { createTask } from '../../service/taskService'
 
 const CreateTask = () => {
+    const user = localStorage.getItem('user');
+    console.log(user.toString());
     const [formData, setFormData] = useState({
         title: '',
         description: '',
         due_date: '',
-        status: 'pending', // Valeur par défaut
+        status: 'pending',
+        user_id: 2
     });
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
     };
-
+    const [loading, setLoading] = useState(false);
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+        setLoading(true);
         try {
-            // Remplace l'URL par l'URL de ton API pour créer une tâche
-            const response = await axios.post('http://localhost:8000/api/tasks', formData, {
-                withCredentials: true, // Si tu utilises des cookies
-            });
+             // console.log(formData);return
+            await createTask(formData);
             toast.success("Tâche créée avec succès !");
-            // Réinitialiser le formulaire après une soumission réussie
-            setFormData({ title: '', description: '', due_date: '', status: 'pending' });
+            setFormData({ title: '', description: '', due_date: '', status: 'pending', user_id: 0 });
         } catch (error) {
             toast.error("Erreur lors de la création de la tâche !");
             console.error('Error creating task:', error);
+        } finally {
+            setLoading(false);
         }
     };
-
     return (
         <div className="flex items-center justify-center min-h-screen bg-gray-100">
             <div className="p-8 bg-white rounded shadow-md w-96">

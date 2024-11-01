@@ -10,8 +10,8 @@ const TaskList = () => {
 
     const fetchTasks = async () => {
         try {
-            const data = await getTasks(); // Appelle le service pour récupérer les tâches
-            console.log(data)
+            const response = await getTasks();
+            const data = Array.isArray(response) ? response : response.tasks || [];
             setTasks(data);
         } catch (error) {
             console.error('Error fetching tasks:', error);

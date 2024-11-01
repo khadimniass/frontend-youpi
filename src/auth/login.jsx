@@ -14,7 +14,6 @@ const Login = () => {
     const navigate = useNavigate();
     const [errors, setErrors] = useState({});
 
-
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
@@ -27,13 +26,14 @@ const Login = () => {
             setErrors(validationErrors);
             return;
         }
-
         setLoading(true)
         try {
             //console.log(formData);
-            await login(formData);
+            const data = login(formData);
             toast.success('connexion réussi avec succues');
-            navigate('/list-task')
+            setTimeout(()=>{
+                navigate('/list-task')
+            },2000);
         }catch (error){
             toast.error('login ou mot de pass incorect');
         } finally {
